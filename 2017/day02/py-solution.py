@@ -11,9 +11,12 @@ with open(file_name) as f:
     for line in input_:
         line = line.strip()
         numbers = [int(i) for i in line.split('\t')]
-        m = int(max(numbers))
-        n = int(min(numbers))
-        print(m, n)
-        sum_ += m - n
+        for i in numbers:
+            for j in numbers:
+                if i == j:
+                    continue
+                if i % j == 0:
+                    print(i,j)
+                    sum_ += max(i, j) / min(i,j)
 
     print(sum_)

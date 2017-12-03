@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 
 import sys
+import collections
+
 file_name = sys.argv[1]
 
 with open(file_name) as f:
@@ -8,49 +10,86 @@ with open(file_name) as f:
 
     location = [0,0]
 
+    values = collections.defaultdict(int)
+    values[(0,0)] = 1
+
     current_nr = 1
     stop = 1
     while True:
         # right
-        if current_nr + stop > nr:
-            location[1] += nr - current_nr
-            #print(location, current_nr, stop)
-            break
-        location[1] += stop
-        current_nr += stop
+        for i in range(stop):
+            location[1] += 1
+            values[tuple(location)] = \
+                values[(location[0],   location[1]+1)] + \
+                values[(location[0]+1, location[1]+1)] + \
+                values[(location[0]+1, location[1])] + \
+                values[(location[0]+1, location[1]-1)] + \
+                values[(location[0],   location[1]-1)] + \
+                values[(location[0]-1, location[1]-1)] + \
+                values[(location[0]-1, location[1])] + \
+                values[(location[0]-1, location[1]+1)]
+            if values[tuple(location)] > nr:
+                print(values[tuple(location)])
+                import sys; sys.exit(0)
+            current_nr += 1
+            print(values[tuple(location)])
 
-        #print(location)
         # up
-        if current_nr + stop > nr:
-            location[0] += nr - current_nr
-            #print(location, current_nr, stop)
-            break
-        location[0] += stop
-        current_nr += stop
+        for i in range(stop):
+            location[0] += 1
+            values[tuple(location)] = \
+                values[(location[0],   location[1]+1)] + \
+                values[(location[0]+1, location[1]+1)] + \
+                values[(location[0]+1, location[1])] + \
+                values[(location[0]+1, location[1]-1)] + \
+                values[(location[0],   location[1]-1)] + \
+                values[(location[0]-1, location[1]-1)] + \
+                values[(location[0]-1, location[1])] + \
+                values[(location[0]-1, location[1]+1)]
+            if values[tuple(location)] > nr:
+                print(values[tuple(location)])
+                import sys; sys.exit(0)
+            current_nr += 1
+            print(values[tuple(location)])
 
         stop += 1
 
-        #print(location)
         # left
-        if current_nr + stop > nr:
-            location[1] -= nr - current_nr
-            #print(location, current_nr, stop)
-            break
-        location[1] -= stop
-        current_nr += stop
+        for i in range(stop):
+            location[1] -= 1
+            values[tuple(location)] = \
+                values[(location[0],   location[1]+1)] + \
+                values[(location[0]+1, location[1]+1)] + \
+                values[(location[0]+1, location[1])] + \
+                values[(location[0]+1, location[1]-1)] + \
+                values[(location[0],   location[1]-1)] + \
+                values[(location[0]-1, location[1]-1)] + \
+                values[(location[0]-1, location[1])] + \
+                values[(location[0]-1, location[1]+1)]
+            if values[tuple(location)] > nr:
+                print(values[tuple(location)])
+                import sys; sys.exit(0)
+            current_nr += 1
+            print(values[tuple(location)])
 
-        #print(location)
         # down
-        if current_nr + stop > nr:
-            location[0] -= nr - current_nr
-            #print(location, current_nr, stop)
-            break
-        location[0] -= stop
-        current_nr += stop
+        for i in range(stop):
+            location[0] -= 1
+            values[tuple(location)] = \
+                values[(location[0],   location[1]+1)] + \
+                values[(location[0]+1, location[1]+1)] + \
+                values[(location[0]+1, location[1])] + \
+                values[(location[0]+1, location[1]-1)] + \
+                values[(location[0],   location[1]-1)] + \
+                values[(location[0]-1, location[1]-1)] + \
+                values[(location[0]-1, location[1])] + \
+                values[(location[0]-1, location[1]+1)]
+            if values[tuple(location)] > nr:
+                print(values[tuple(location)])
+                import sys; sys.exit(0)
+            current_nr += 1
+            print(values[tuple(location)])
 
         stop += 1
-        #print(location)
-
-    print(abs(location[0]) + abs(location[1]))
 
 

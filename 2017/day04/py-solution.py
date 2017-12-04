@@ -16,6 +16,8 @@ with open(file_name) as f:
             continue
 
         p = passphrase.split(' ')
+        print(''.join(sorted(p[0])))
+        p = [''.join(sorted(i)) for i in p]
         if len(p) == len(set(p)):
             valid += 1
             print(passphrase)

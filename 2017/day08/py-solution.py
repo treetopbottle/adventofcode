@@ -11,6 +11,7 @@ with open(file_name) as f:
 
     registers = collections.defaultdict(int)
 
+    max_amount = 0
     for line in input_:
         line = line.strip()
         if not line:
@@ -56,5 +57,7 @@ with open(file_name) as f:
                 elif amnt == 'dec':
                     registers[reg] -= int(val)
         print(registers)
+        max_amount = max(max_amount, max(registers.values()))
     print(max(registers.values()))
+    print(max_amount)
 

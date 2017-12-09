@@ -14,6 +14,7 @@ with open(file_name) as f:
         group_score = 0
         garbage_started = False
         ignore_next = False
+        garbage_removed = 0
         for char in line:
             # new group
             if ignore_next:
@@ -22,6 +23,7 @@ with open(file_name) as f:
             elif char == '!':
                 ignore_next = True
             elif garbage_started and not char == '>':
+                garbage_removed += 1
                 pass
             elif char == '<':
                 garbage_started = True
@@ -36,5 +38,5 @@ with open(file_name) as f:
                 pass
             #print(char)
 
-        print('line', str(cnt+1) + ':', total_score)
+        print('line', str(cnt+1) + ':', garbage_removed)
 

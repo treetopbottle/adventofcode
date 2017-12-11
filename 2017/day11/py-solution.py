@@ -10,30 +10,37 @@ file_name = sys.argv[1]
 with open(file_name) as f:
     input_ = f.readlines()
 
-    directions = ['n', 'ne', 'se', 's', 'sw', 'nw']
-    opposites = {
-        'n': 's',
-        'ne': 'sw',
-        'se': 'nw',
-        's': 'n',
-        'sw': 'ne',
-        'nw': 'se'
-    }
-
     for line in input_:
         steps = line.strip().split(',')
 
-        travelled = collections.defaultdict(int)
+        pos = [0,0]
         for step in steps:
-            travelled[step] += 1
+            if step == 'n':
+                pos[0] += 0
+                pos[1] += 1
+            elif step == 'ne':
+                pos[0] += 1
+                pos[1] += 0
+            elif step == 'se':
+                pos[0] += 1
+                pos[1] += -1
+            elif step == 's':
+                pos[0] += 0
+                pos[1] += -1
+            elif step == 'sw':
+                pos[0] += -1
+                pos[1] += 0
+            elif step == 'nw':
+                pos[0] += -1
+                pos[1] += 1
 
-        distance = 0
+        distance = max(abs(pos[0]), abs(pos[1]))
+        if pos[0] < 0 and pos[1] < 0:
+            distance = abs(pos[0]) + abs(pos[1])
+        elif pos[0] > 0 and pos[1] > 0:
+            distance = abs(pos[0]) + abs(pos[1])
 
-        for d in directions:
-            if travelled[d] > travelled[opposites[d]]:
-                travelled[d] -= travelled[opposites[d]]
-                travelled[opposites[d]] -= travelled[opposites[d]]
-
-        print('---')
-        print(travelled)
+        print(pos)
+        print(distance)
+        print('----')
 

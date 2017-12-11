@@ -35,12 +35,7 @@ with open(file_name) as f:
                 pos[0] += -1
                 pos[1] += 1
 
-            distance = max(abs(pos[0]), abs(pos[1]))
-            if pos[0] < 0 and pos[1] < 0:
-                distance = abs(pos[0]) + abs(pos[1])
-            elif pos[0] > 0 and pos[1] > 0:
-                distance = abs(pos[0]) + abs(pos[1])
-            
+            distance = max(abs(pos[0]), abs(pos[1]), abs(pos[0] + pos[1]))
             max_distance = max(distance, max_distance)
 
         print(max_distance)

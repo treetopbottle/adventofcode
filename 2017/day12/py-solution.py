@@ -11,7 +11,6 @@ file_name = sys.argv[1]
 def extend_group(char, group, comms):
     group.add(char)
     new_chars = comms[char]
-    print(group)
     for new_char in new_chars:
         if new_char not in group:
             extend_group(new_char, group, comms)
@@ -31,10 +30,13 @@ with open(file_name) as f:
         for r in right:
             comms[left.strip()].append(r.strip())
 
-    id0_group = set()
-    extend_group('0', id0_group, comms)
+    all_groups = set()
+    for k in comms.keys():
+        group = set()
+        extend_group(k, group, comms)
+        all_groups.add(str(sorted(group)))
 
-    print(sorted(id0_group))
+    print(sorted(all_groups))
     print('---')
-    print(len(id0_group))
+    print(len(all_groups))
 

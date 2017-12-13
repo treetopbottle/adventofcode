@@ -27,7 +27,6 @@ with open(file_name) as f:
     print(layers)
 
     for wait in range(10000000):
-        print('---')
         caught = False
         for layer in layers:
             depth = layers[layer]
@@ -35,7 +34,6 @@ with open(file_name) as f:
             steps_til_return = (depth - 1) * 2
             if (layer + wait) % steps_til_return == 0:
                 caught = True
-                print('caught in layer', layer, '( wait', wait, ')', steps_til_return)
                 break
 
         if caught == False:

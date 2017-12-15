@@ -20,11 +20,10 @@ with open(file_name) as f:
 
     nr_matches = 0
     for i in range(int(40e6)):
+    #for i in range(5):
         a_val = next_value(a_val, 16807)
         b_val = next_value(b_val, 48271)
-        a_bin = '{:0>32b}'.format(a_val)
-        b_bin = '{:0>32b}'.format(b_val)
-        if a_bin[-16:] == b_bin[-16:]:
+        if (a_val % 2**16) == (b_val % 2**16):
             nr_matches += 1
 
     print(nr_matches)

@@ -53,6 +53,17 @@ def get_knot_hash(input_lengths):
     return hex_string
 
 
+def remove_group(grid, i, j):
+    print(i,j)
+    if grid[i][j] == '1':
+        grid[i][j] = '0'
+
+        remove_group(grid, i-1, j)
+        remove_group(grid, i,   j-1)
+        remove_group(grid, i+1, j)
+        remove_group(grid, i,   j+1)
+
+
 with open(file_name) as f:
     input_ = f.readlines()
     input_ = 'xlqgujun'
@@ -64,14 +75,33 @@ with open(file_name) as f:
 
     for i in range(128):
         key = input_ + '-' + str(i)
-        print(key)
+        #print(key)
         knot_hash = get_knot_hash(key)
-        print(knot_hash)
+        #print(knot_hash)
         for hex_char in knot_hash:
             grid += '{:0>4b}'.format(int(hex_char, 16))
         grid += '\n'
 
-    print(grid.count('1'))
+    grid_array = grid[:-1].split('\n')
+    new_grid = []
+    new_grid.append(['0']*130)
+    for line in grid_array:
+        new_grid.append(['0'] + list(line) + ['0'])
+    new_grid.append(['0']*130)
+
+    print(len(new_grid[1]))
+    print(len(new_grid))
+    print('---')
+
+    nr_groups = 0
+    for i in range(1,129):
+        for j in range(1,129):
+            if new_grid[i][j] == '1':
+                nr_groups += 1
+                remove_group(new_grid, i, j)
+
+
+    print(nr_groups)
     #lines = grid.split('\n')
     #print(len(lines))
     #print('--')

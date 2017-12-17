@@ -11,22 +11,21 @@ with open(file_name) as f:
     step_size = 312
     #step_size = 3
 
-    nr_steps = 2017
-    #nr_steps = 5
+    nr_steps = 50000000
+    #nr_steps = 10
 
     buf = [0]
     cur_index = 0
+    number_after_zero = 0
     for num in range(1,nr_steps+1):
-        #print(cur_index, step_size, len(buf))
-        cur_index = ((cur_index + step_size) % len(buf)) + 1
-        #print(cur_index)
-        buf.insert(cur_index, num)
+        buf_size = num
+        cur_index = ((cur_index + step_size) % buf_size) + 1
 
-        #print(buf)
+        if cur_index == 1:
+            number_after_zero = num
+            print('after', number_after_zero)
 
-    i = buf.index(2017)
+
     print('---')
-    print(buf[i-3:i+3])
-    next_number = buf[i+1]
-    print(next_number)
+    print(number_after_zero)
 

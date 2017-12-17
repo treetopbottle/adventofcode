@@ -8,14 +8,15 @@ func main() {
     const step_size = 312
     const nr_steps = 2017
 
-    buf := []int{0}
+    var buf [nr_steps+1]int
     cur_index := 0
     for num := 1; num < nr_steps+1; num++ {
         cur_index = ((cur_index + step_size) % num) + 1
 
-        before := buf[:cur_index]
-        after := append([]int{num}, buf[cur_index:]...)
-        buf = append(before, after...)
+        for i := num; i > cur_index; i-- {
+            buf[i] = buf[i-1]
+        }
+        buf[cur_index] = num
     }
 
     for i, num := range buf {

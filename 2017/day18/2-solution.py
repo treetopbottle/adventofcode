@@ -64,12 +64,17 @@ def run_progam(instructions, registers, message_bus):
             registers['instruction'] -= 1
 
     elif op == 'jgz':
+        if args[0] in registers:
+            jump = registers[args[0]]
+        else:
+            jump = int(args[0])
+
         if args[1] in registers:
             val = registers[args[1]]
         else:
             val = int(args[1])
 
-        if registers[args[0]] > 0:
+        if jump > 0:
             registers['instruction'] += val
             registers['instruction'] -= 1
 

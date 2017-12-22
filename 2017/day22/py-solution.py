@@ -7,10 +7,7 @@ import collections
 def visualize_grid(infected, grid_size):
     for y in range(grid_size, -1*grid_size + 1, -1):
         for x in range(-1*grid_size + 1, grid_size):
-            if infected_nodes[x,y]:
-                print('#', end='')
-            else:
-                print('.', end='')
+            print(infected_nodes[x,y], end='')
         print()
 
 
@@ -20,9 +17,9 @@ with open(file_name) as f:
     grid = f.readlines()
     #grid = ['..#\n', '#..\n', '...\n']
 
-    infected_nodes = collections.defaultdict(bool)
+    infected_nodes = collections.defaultdict(lambda: '.')
 
-    nr_bursts = 10000
+    nr_bursts = 10000000
     nr_bursts_cause_infection = 0
 
     # determine infected nodes
@@ -32,7 +29,7 @@ with open(file_name) as f:
         x = int((grid_size-1) / 2 * -1)
         for node in line.strip():
             if node == '#':
-                infected_nodes[x,y] = True
+                infected_nodes[x,y] = '#'
             elif node == '.':
                 pass
             else:
@@ -40,28 +37,46 @@ with open(file_name) as f:
             x += 1
         y -= 1
 
-    nr_start_infected = list(infected_nodes.values()).count(True)
-
     dir_x, dir_y = 0,1
     x,y = 0,0
     for i in range(nr_bursts):
-        if infected_nodes[x,y]:
+        if infected_nodes[x,y] == '#':
             # turn right
             if dir_x == 0:
                 dir_x, dir_y = dir_y, 0
             else:
                 dir_x, dir_y = 0, -1*dir_x
-        else:
+
+            # flag infected
+            infected_nodes[x,y] = 'F'
+
+        elif infected_nodes[x,y] == 'W':
+            # don't turn
+
+            # infect weakened
+            infected_nodes[x,y] = '#'
+
+        elif infected_nodes[x,y] == '.':
             # turn left
             if dir_x == 0:
                 dir_x, dir_y = -1*dir_y, 0
             else:
                 dir_x, dir_y = 0, dir_x
 
-        # change node
-        infected_nodes[x,y] = not infected_nodes[x,y]
+            # weaken clean
+            infected_nodes[x,y] = 'W'
 
-        if (infected_nodes[x,y]):
+        elif infected_nodes[x,y] == 'F':
+            # reverse direction
+            dir_x, dir_y = -1*dir_x, -1*dir_y
+
+            # clean flagged
+            infected_nodes[x,y] = '.'
+
+        else:
+            raise ValueError('wtf is happening')
+
+        if (infected_nodes[x,y] == '#'):
             nr_bursts_cause_infection += 1
 
         # move
@@ -71,12 +86,8 @@ with open(file_name) as f:
         #print(x,y)
         #visualize_grid(infected_nodes, 9)
 
-    nr_infected = list(infected_nodes.values()).count(True)
-
     visualize_grid(infected_nodes, 40)
     print('----')
-    print('extra infected:', nr_infected - nr_start_infected)
-    print('(total infected:', nr_infected, ', start:', nr_start_infected, ')')
     print(nr_bursts_cause_infection)
 
 

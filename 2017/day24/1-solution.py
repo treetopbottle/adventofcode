@@ -5,18 +5,24 @@ import collections
 import copy
 
 
-def try_component(left_side, components, strength, strengths):
-    if len(components[left_side]) == 0:
-        strengths.append(strength)
-        return
+def try_component(prev_comp, components, strength, strengths, components_left):
+    side1, side2 = prev_comp.split('/')
 
-    possibilities = components[left_side]
+    possibilities = set(components[side1] + components[side2])
 
-    for pos in possibilities:
-        components_copy = copy.deepcopy(components)
-        components_copy[left_side].remove(pos)
-        new_strength = strength + int(pos)
-        try_component(pos, components_copy, new_strength, strengths)
+    for comp in possibilities:
+        if not comp in components_left:
+            continue
+
+        components_left_copy = copy.deepcopy(components_left)
+        components_left_copy.remove(comp)
+        side1, side2 = prev_comp.split('/')
+        new_strength = strength + int(side1) + int(side2)
+
+        try_component(comp, components, new_strength, strengths, components_left_copy)
+
+    strengths.add(strength)
+    print('recursion done', len(strengths))
 
 
 file_name = sys.argv[1]
@@ -24,16 +30,21 @@ file_name = sys.argv[1]
 with open(file_name) as f:
     lines = f.readlines()
 
+    what_is_left = []
     components = collections.defaultdict(list)
     for line in lines:
+        component = line.strip()
+        what_is_left.append(component)
+
         side1, side2 = line.strip().split('/')
-        components[side1].append(side2)
+        components[side1].append(component)
+        components[side2].append(component)
 
     print(components)
 
-    strengths = []
+    strengths = set()
     strength = 0
-    try_component('0', components, strength, strengths)
+    try_component('0/0', components, strength, strengths, what_is_left)
 
     print(strengths)
     print(max(strengths))

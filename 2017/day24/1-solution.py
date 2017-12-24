@@ -5,7 +5,23 @@ import collections
 import copy
 
 
-def find_possible_bridges(bridge_so_far, all_components):
+def get_bridge_strength(bridge):
+    strength = 0
+    for component in bridge:
+        n1, n2 = component.split('/')
+        strength += int(n1) + int(n2)
+    return strength
+
+
+def sort_components(components):
+    order = []
+    for comp in components:
+        strength = get_bridge_strength([comp])
+        order.append((strength, comp))
+    return [o[1] for o in sorted(order)]
+
+
+def find_possible_bridges(bridge_so_far, all_components, strengths, tried_bridges):
     bridge_end = bridge_so_far[-1]
 
     n1, n2 = bridge_end.split('/')
@@ -27,13 +43,22 @@ def find_possible_bridges(bridge_so_far, all_components):
             n2 = cur_pins[1]
 
     possible = set(all_components[n1] + all_components[n2])
+    possible = sort_components(possible)
     for component in possible:
         if component in bridge_so_far:
             continue
         new_bridge = bridge_so_far + [component]
-        find_possible_bridges(new_bridge, all_components)
+        if len(new_bridge) > 3:
+            generic_bridge = str((new_bridge[0], new_bridge[-1], sorted(new_bridge[1:-1])))
+            if generic_bridge in tried_bridges:
+                continue
+            tried_bridges.add(generic_bridge)
+        find_possible_bridges(new_bridge, all_components, strengths, tried_bridges)
     
-    print(bridge_so_far[1:])
+    strengths.add(get_bridge_strength(bridge_so_far))
+    #print(bridge_so_far[1:])
+    if len(tried_bridges) % 1000 == 0:
+        print(len(strengths), len(tried_bridges))
 
 
 file_name = sys.argv[1]
@@ -53,6 +78,9 @@ with open(file_name) as f:
 
     print(components)
 
-    tried_combinations = set()
+    tried_bridges = set()
     start_bridge = ['0/0']
-    find_possible_bridges(start_bridge, components)
+    strengths = set()
+    find_possible_bridges(start_bridge, components, strengths, tried_bridges)
+
+    print(max(strengths))

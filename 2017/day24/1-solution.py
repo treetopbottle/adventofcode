@@ -5,13 +5,18 @@ import collections
 import copy
 
 
-def take_component(to_take, components):
-    if len(components[to_take]) == 0:
-        return None
+def try_component(left_side, components, strength, strengths):
+    if len(components[left_side]) == 0:
+        strengths.append(strength)
+        return
 
-    next_ = max(components[to_take])
-    components[to_take].remove(next_)
-    return next_
+    possibilities = components[left_side]
+
+    for pos in possibilities:
+        components_copy = copy.deepcopy(components)
+        components_copy[left_side].remove(pos)
+        new_strength = strength + int(pos)
+        try_component(pos, components_copy, new_strength, strengths)
 
 
 file_name = sys.argv[1]
@@ -26,20 +31,27 @@ with open(file_name) as f:
 
     print(components)
 
-    comp_left = True
-    sum_ = 0
-    current = '0'
-    while comp_left:
-        next_ = take_component(current, components)
-        print(next_)
+    strengths = []
+    strength = 0
+    try_component('0', components, strength, strengths)
 
-        if next_ == None:
-            comp_left = False
-            break
+    print(strengths)
+    print(max(strengths))
 
-        sum_ += int(next_)
+    #comp_left = True
+    #sum_ = 0
+    #current = '0'
+    #while comp_left:
+    #    next_ = take_component(current, components)
+    #    print(next_)
 
-        current = next_
+    #    if next_ == None:
+    #        comp_left = False
+    #        break
 
-    print(sum_)
+    #    sum_ += int(next_)
+
+    #    current = next_
+
+    #print(sum_)
 

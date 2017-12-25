@@ -3,7 +3,7 @@ import sys
 
 
 def score(bridge):
-    return sum(sum(map(int, i)) for i in bridge)
+    return sum(sum(i) for i in bridge)
 
 
 def find_bridges(connector, bridge, remaining):
@@ -27,8 +27,9 @@ def find_bridges(connector, bridge, remaining):
 filename = sys.argv[1]
 with open(filename) as f:
     components = list(map(lambda x: x.strip().split('/'), f.readlines()))
+    components = [list(map(int, i)) for i in components]
 
-    all_bridges = find_bridges('0', [], components)
+    all_bridges = find_bridges(0, [], components)
 
     solution1 = max(map(score, all_bridges))
     print(solution1)

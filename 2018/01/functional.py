@@ -1,10 +1,24 @@
 #!/usr/bin/env python3
 
+def lines_loop():
+    while True:
+        for line in lines:
+            yield line
+
+
 with open('input') as f:
     lines = f.readlines()
 
-numbers = map(int, lines)
-total = sum(numbers)
+frequency_changes = map(int, lines_loop())
 
-print(total)
+# Can't make recursive, because of maximum recursion depth
+frequency = 0
+seen_frequencies = set()
+for change in frequency_changes:
+    if frequency in seen_frequencies:
+        break
+    seen_frequencies.add(frequency)
+    frequency += change
+
+print(frequency)
 

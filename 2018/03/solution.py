@@ -27,11 +27,9 @@ with open('input') as f:
 
     for claim in claims:
         id_, squares = get_squares(claim)
-        has_overlap = False
         for square in squares:
             if square in overlapping_squares:
-                has_overlap = True
-                continue
-        if not has_overlap:
+                break
+        else:
             print(id_)
             break

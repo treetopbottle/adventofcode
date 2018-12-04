@@ -7,15 +7,11 @@ with open('sorted_input') as f:
 
 
 def parse(record):
-    #month = record[6:8]
-    #day = record[9:11]
-    #hour = int(record[12:14])
     minute = int(record[15:17])
     action = record[19:]
     return (minute, action)
 
-guard_sleep_time = defaultdict(int)
-guard_sleep_minutes = defaultdict(lambda: defaultdict(int))
+sleep_minutes = defaultdict(int)
 current_guard = ''
 sleep_start = 0
 for record in records:
@@ -26,14 +22,11 @@ for record in records:
         sleep_start = minute
     elif action[0] == 'w':
         sleep_end = minute
-        sleep_time = sleep_end - sleep_start
-        guard_sleep_time[current_guard] += sleep_time
         for i in range(sleep_start, sleep_end):
-            guard_sleep_minutes[current_guard][i] += 1
+            key = (current_guard, i)
+            sleep_minutes[key] += 1
 
-best_guard = max(guard_sleep_time, key=guard_sleep_time.get)
-sleep_minutes = guard_sleep_minutes[best_guard]
-best_minute = max(sleep_minutes, key=sleep_minutes.get)
+best_guard, best_minute = max(sleep_minutes, key=sleep_minutes.get)
 
 print(best_guard, best_minute)
 print(best_guard * best_minute)

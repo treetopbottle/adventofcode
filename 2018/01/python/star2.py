@@ -11,7 +11,6 @@ with open('input') as f:
 
 frequency_changes = map(int, lines_loop())
 
-# Can't make recursive, because of maximum recursion depth
 frequency = 0
 seen_frequencies = set()
 for change in frequency_changes:

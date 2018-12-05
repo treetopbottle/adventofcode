@@ -29,7 +29,9 @@ import string
 lengths = {}
 min_ = len(polymer)
 for lower in string.ascii_lowercase:
-    new_polymer = list(filter(lambda x: x.lower() != lower, polymer))
+    new_polymer = polymer
+    new_polymer = new_polymer.replace(lower, '')
+    new_polymer = new_polymer.replace(lower.upper(), '')
     length_new = len(react(new_polymer))
     min_ = min(min_, length_new)
 

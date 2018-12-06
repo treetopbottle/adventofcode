@@ -9,17 +9,15 @@ import (
 
 func findDoubleFrequency(start int, changes []string) int {
     frequency := start
-    seenFrequencies := []int{frequency}
+    seenFrequencies := map[int]int{frequency: 1}
     for {
         for _, change := range changes {
             change, _ := strconv.Atoi(change)
             frequency += change
-            for _, seenFrequency := range seenFrequencies {
-                if frequency == seenFrequency {
-                    return frequency
-                }
+            seenFrequencies[frequency] += 1
+            if seenFrequencies[frequency] == 2 {
+                return frequency
             }
-            seenFrequencies = append(seenFrequencies, frequency)
         }
     }
 }

@@ -2,7 +2,7 @@
 
 from collections import defaultdict
 
-with open('sorted_input') as f:
+with open('input') as f:
     records = f.readlines()
 
 
@@ -14,7 +14,7 @@ def parse(record):
 sleep_minutes = defaultdict(int)
 current_guard = ''
 sleep_start = 0
-for record in records:
+for record in sorted(records):
     minute, action = parse(record)
     if action[0] == 'G':
         current_guard = int(action.split(' ')[1][1:])

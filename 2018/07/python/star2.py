@@ -19,25 +19,31 @@ for line in lines:
     letters.add(blocker)
 
 
-workers = []
-free_letters = [l for l in letters if not l in locked_by.keys()]
+NR_WORKERS = 5
+MIN_WORK_TIME = 61
 
 time = 0
+workers = sorted([])
+free_letters = sorted([l for l in letters if not l in locked_by.keys()])
+
 while free_letters or workers:
-    if free_letters and len(workers) < 5:
-        next_letter, *free_letters = sorted(free_letters)
-        finish_time = time + 61 + (ord(next_letter) - ord('A'))
-        workers.append((finish_time, next_letter))
+    # Start work
+    if free_letters and len(workers) < NR_WORKERS:
+        next_letter = free_letters.pop(0)
+        finish_time = time + MIN_WORK_TIME + (ord(next_letter) - ord('A'))
+        workers = sorted(workers + [(finish_time, next_letter)])
         continue
 
+    # Finish work
     (finish_time, finished_letter) = workers.pop(0)
     print('finished {} at {}'.format(finished_letter, finish_time))
     time = finish_time
     
+    # Free letters
     for locked_letter in locking[finished_letter]:
         locked_by[locked_letter].remove(finished_letter)
         if not locked_by[locked_letter]:
-            free_letters.append(locked_letter)
+            free_letters = sorted(free_letters + [locked_letter])
 
 print(time)
 

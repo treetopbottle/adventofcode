@@ -17,15 +17,15 @@ for line in lines:
     letters.add(other)
 
 
-order = ''
+result = ''
 while len(letters) > 0:
     for letter in sorted(letters):
-        not_unlocked = list(itertools.chain(*requirements.values()))
-        if letter not in not_unlocked:
-            order += letter
+        locked = list(itertools.chain(*requirements.values()))
+        if letter not in locked:
+            result += letter
             if letter in requirements:
                 requirements.pop(letter)
             break
-    letters.remove(order[-1])
+    letters.remove(result[-1])
 
-print(order)
+print(result)

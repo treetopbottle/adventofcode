@@ -16,7 +16,7 @@ class Unit():
 
 
 class World():
-    def __init__(self, lines):
+    def __init__(self, lines, extra_elf_ap):
         self.width = len(lines[0])
         self.height = len(lines)
         self.grid = {}
@@ -26,6 +26,8 @@ class World():
                     self.grid[(i,j)] = Unit(char, HIT_POINTS, False)
                 else:
                     self.grid[(i,j)] = char
+        self.extra_elf_ap = extra_elf_ap
+        self.elves_died = False
         self.rounds = 0
 
     def __repr__(self):
@@ -52,17 +54,16 @@ class World():
                     c.has_moved = False
 
     def do_round(self):
-        full_round = True
         for i in range(self.height):
             for j in range(self.width):
                 c = self.grid[(i,j)]
                 if isinstance(c, Unit) and not c.has_moved:
-                    finished = self.do_turn((i,j))
-                    full_round = full_round and finished
+                    found_targets = self.do_turn((i,j))
+                    if not found_targets:
+                        return False
         self.reset_moved()
-        if full_round:
-            self.rounds += 1
-        return full_round
+        self.rounds += 1
+        return True
 
     def has_targets_remaining(self, unit_type):
         for i in range(self.height):
@@ -113,6 +114,13 @@ class World():
                     targets.append((i,j))
         return targets
 
+    def get_best_path(self, paths):
+        best_path = paths[0]
+        for path in paths[1:]:
+            if path[-1] < best_path[-1]:
+                best_path = path
+        return best_path
+
     def get_path_to_target(self, unit_loc):
         paths = [[unit_loc]]
         visited = set([unit_loc])
@@ -135,7 +143,7 @@ class World():
                     visited.add(loc)
             paths = new_paths
         if target_found:
-            return min(paths_to_target)
+            return self.get_best_path(paths_to_target)
         return None
 
     def move(self, unit_loc):
@@ -152,12 +160,17 @@ class World():
         return path[1]
 
     def attack(self, unit_loc):
-        target_loc = self.get_best_target(unit_loc, self.grid[unit_loc].type)
+        unit = self.grid[unit_loc]
+        target_loc = self.get_best_target(unit_loc, unit.type)
         if not target_loc:
             return
         target = self.grid[target_loc]
         target.hp -= ATTACK_POWER
+        if unit.type == 'E':
+            target.hp -= self.extra_elf_ap
         if target.hp <= 0:
+            if target.type == 'E':
+                self.elves_died = True
             self.grid[target_loc] = '.'
 
     def get_hp_sum(self):
@@ -169,24 +182,38 @@ class World():
                     total += c.hp
         return total
 
+    def get_nr_elves(self):
+        total = 0
+        for i in range(self.height):
+            for j in range(self.width):
+                c = self.grid[(i,j)]
+                if isinstance(c, Unit) and c.type == 'E':
+                    total += 1
+        return total
+
 
 def run_simulation(file_name):
-    world = None
-    with open(file_name) as f:
-        lines = [l.strip() for l in f.readlines()]
-        world = World(lines)
+    for i in range(50):
+        world = None
+        with open(file_name) as f:
+            lines = [l.strip() for l in f.readlines()]
+            world = World(lines, i)
 
-    rounds = 0
-    round_finished = True
-    while round_finished:
-        round_finished = world.do_round()
+        rounds = 0
+        round_finished = True
+        while round_finished:
+            round_finished = world.do_round()
 
-    print("Simulation for '{}'".format(file_name))
-    print(
-        world.rounds, '*', world.get_hp_sum(), '=',
-        world.rounds * world.get_hp_sum()
-    )
-    print(world)
+        if not world.elves_died:
+            print("Simulation for '{}'".format(file_name))
+            print(
+                world.rounds, '*', world.get_hp_sum(), '=',
+                world.rounds * world.get_hp_sum()
+            )
+            print("Total remaining elves", world.get_nr_elves())
+            print("Total elf attack power", i + ATTACK_POWER)
+            print(world)
+            break
 
 
 import os

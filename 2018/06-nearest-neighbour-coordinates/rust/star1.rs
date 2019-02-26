@@ -31,8 +31,8 @@ fn main() {
 
     let mut largest_area = i32::min_value();
     let mut areas: HashMap<(i32, i32), i32> = HashMap::new();
-    for x in (top_left.0 + 1)..(bottom_right.0 + 1) {
-        for y in (top_left.1 + 1)..(bottom_right.1 + 1) {
+    for x in (top_left.0 + 1)..(bottom_right.0 - 1) {
+        for y in (top_left.1 + 1)..(bottom_right.1 - 1) {
             let mut min_distance = i32::max_value();
             let mut closests: Vec<(i32, i32)> = Vec::new();
             for coordinate in coordinates.as_slice() {
